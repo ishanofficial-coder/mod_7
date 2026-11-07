@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Software Engineering & OOP Concepts - Mastery Quiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --primary-accent: #8b5cf6;
+      --primary-glow: rgba(139, 92, 246, 0.4);
+      --secondary-accent: #06b6d4;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --correct-bg: #059669;
+      --correct-border: #10b981;
+      --correct-glow: rgba(16, 185, 129, 0.4);
+      --incorrect-bg: #dc2626;
+      --incorrect-border: #ef4444;
+      --incorrect-glow: rgba(239, 68, 68, 0.4);
+      --btn-hover: rgba(255, 255, 255, 0.08);
+      --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 900px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      box-shadow: var(--glass-shadow);
+      padding: 40px;
+      position: relative;
+      transition: all 0.4s ease;
+    }
+
+    @media (max-width: 640px) {
+      .app-container {
+        padding: 24px 18px;
+        border-radius: 20px;
+      }
+    }
+
+    /* Screen Management */
+    .screen {
+      display: none;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .screen.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Header & Badges */
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: linear-gradient(90deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 50px;
+      color: #c084fc;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    /* Welcome Screen */
+    .welcome-screen {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .welcome-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #ffffff 0%, #a7f3d0 50%, #67e8f9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .welcome-title { font-size: 2rem; }
+    }
+
+    .welcome-desc {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 650px;
+      margin: 0 auto 32px auto;
+      line-height: 1.6;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+      text-align: left;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .feature-icon {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .feature-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 4px;
+      color: #f1f5f9;
+    }
+
+    .feature-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 36px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-accent) 0%, #6366f1 100%);
+      color: #fff;
+      box-shadow: 0 10px 25px var(--primary-glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px var(--primary-glow);
+      filter: brightness(1.1);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.18);
+      transform: translateY(-2px);
+    }
+
+    /* Quiz Header & Progress */
+    .quiz-header {
+      margin-bottom: 28px;
+    }
+
+    .quiz-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .question-count {
+      color: var(--secondary-accent);
+    }
+
+    .score-counter {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 6px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--secondary-accent), var(--primary-accent));
+      border-radius: 20px;
+      transition: width 0.4s ease;
+    }
+
+    /* Question Container */
+    .question-card {
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .question-text {
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.5;
+      color: #f8fafc;
+    }
+
+    @media (max-width: 640px) {
+      .question-card { padding: 20px; }
+      .question-text { font-size: 1.05rem; }
+    }
+
+    /* Options Grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .option-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      color: #e2e8f0;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: var(--btn-hover);
+      border-color: rgba(139, 92, 246, 0.4);
+      transform: translateX(4px);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-prefix {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #a7f3d0;
+      flex-shrink: 0;
+      transition: all 0.25s ease;
+    }
+
+    .option-btn.correct {
+      background: var(--correct-bg) !important;
+      border-color: var(--correct-border) !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 20px var(--correct-glow);
+    }
+
+    .option-btn.correct .option-prefix {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .option-btn.incorrect {
+      background: var(--incorrect-bg) !important;
+      border-color: var(--incorrect-border) !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 20px var(--incorrect-glow);
+    }
+
+    .option-btn.incorrect .option-prefix {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+
+    /* Feedback Box */
+    .feedback-box {
+      display: none;
+      padding: 16px 20px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      font-weight: 700;
+      font-size: 1rem;
+      align-items: center;
+      gap: 12px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .feedback-box.correct {
+      display: flex;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+
+    .feedback-box.incorrect {
+      display: flex;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+
+    /* Quiz Footer Controls */
+    .quiz-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    /* Results Dashboard */
+    .results-screen {
+      text-align: center;
+    }
+
+    .results-header {
+      margin-bottom: 30px;
+    }
+
+    .score-ring-container {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 24px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .score-circle-svg {
+      transform: rotate(-90deg);
+      width: 100%;
+      height: 100%;
+    }
+
+    .score-circle-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.08);
+      stroke-width: 10;
+    }
+
+    .score-circle-progress {
+      fill: none;
+      stroke: url(#scoreGradient);
+      stroke-width: 10;
+      stroke-linecap: round;
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .score-text-inner {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .score-percent {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .score-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .performance-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .performance-msg {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-bottom: 30px;
+    }
+
+    .stats-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    @media (max-width: 500px) {
+      .stats-summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 18px;
+      border-radius: 16px;
+    }
+
+    .stat-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .stat-val.correct-val { color: #34d399; }
+    .stat-val.incorrect-val { color: #f87171; }
+    .stat-val.total-val { color: #67e8f9; }
+
+    .stat-lbl {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .results-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Review Screen */
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .review-list {
+      max-height: 500px;
+      overflow-y: auto;
+      padding-right: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .review-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .review-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+    }
+
+    .review-item {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: left;
+    }
+
+    .review-q-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      color: #f1f5f9;
+    }
+
+    .review-ans {
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .review-ans.user-choice { color: #f87171; }
+    .review-ans.correct-choice { color: #34d399; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- WELCOME SCREEN -->
+    <div id="welcomeScreen" class="screen active welcome-screen">
+      <span class="badge">Comprehensive Exam Prep</span>
+      <h1 class="welcome-title">Software Engineering & OOP Concepts</h1>
+      <p class="welcome-desc">Master Object-Oriented Design, SDLC Models, Testing Strategies, and Program Design Tools with our interactive 100-question practice dashboard.</p>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">📚</span>
+          <div class="feature-title">100 Exam MCQs</div>
+          <div class="feature-text">Strictly curated from course lectures & text modules.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">⚡</span>
+          <div class="feature-title">Instant Feedback</div>
+          <div class="feature-text">Visual indicators and clear explanations for every response.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🎯</span>
+          <div class="feature-title">Randomized Logic</div>
+          <div class="feature-text">Shuffled questions & non-predictable answer distribution.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📊</span>
+          <div class="feature-title">Detailed Analytics</div>
+          <div class="feature-text">In-depth performance evaluation and incorrect answer review.</div>
+        </div>
+      </div>
+
+      <button id="startBtn" class="btn btn-primary">
+        <span>Start Practice Quiz</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quizScreen" class="screen">
+      <div class="quiz-header">
+        <div class="quiz-stats">
+          <span class="question-count" id="qCountDisplay">Question 1 of 100</span>
+          <div class="score-counter">Current Score: <span id="currentScore">0</span></div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="question-text" id="questionText">Loading Question...</div>
+      </div>
+
+      <div class="options-grid" id="optionsGrid">
+        <!-- Dynamic Option Buttons -->
+      </div>
+
+      <div id="feedbackBox" class="feedback-box">
+        <span id="feedbackIcon"></span>
+        <span id="feedbackText"></span>
+      </div>
+
+      <div class="quiz-footer">
+        <button id="nextBtn" class="btn btn-primary" style="display: none;">
+          <span>Next Question</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div id="resultsScreen" class="screen results-screen">
+      <div class="results-header">
+        <span class="badge">Assessment Complete</span>
+        
+        <div class="score-ring-container">
+          <svg class="score-circle-svg" viewBox="0 0 160 160">
+            <defs>
+              <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#06b6d4" />
+                <stop offset="100%" stop-color="#8b5cf6" />
+              </linearGradient>
+            </defs>
+            <circle class="score-circle-bg" cx="80" cy="80" r="70"></circle>
+            <circle id="scoreCircleProgress" class="score-circle-progress" cx="80" cy="80" r="70"></circle>
+          </svg>
+          <div class="score-text-inner">
+            <span id="finalPercent" class="score-percent">0%</span>
+            <span class="score-sub">Accuracy</span>
+          </div>
+        </div>
+
+        <h2 id="performanceTitle" class="performance-title">Outstanding Performance!</h2>
+        <p id="performanceMsg" class="performance-msg">You demonstrated exceptional mastery of Software Engineering and Object-Oriented principles.</p>
+      </div>
+
+      <div class="stats-summary-grid">
+        <div class="stat-card">
+          <div id="statTotal" class="stat-val total-val">100</div>
+          <div class="stat-lbl">Total Questions</div>
+        </div>
+        <div class="stat-card">
+          <div id="statCorrect" class="stat-val correct-val">0</div>
+          <div class="stat-lbl">Correct Answers</div>
+        </div>
+        <div class="stat-card">
+          <div id="statIncorrect" class="stat-val incorrect-val">0</div>
+          <div class="stat-lbl">Incorrect Answers</div>
+        </div>
+      </div>
+
+      <div class="results-actions">
+        <button id="restartBtn" class="btn btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+          <span>Restart Quiz</span>
+        </button>
+        <button id="reviewBtn" class="btn btn-secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          <span>Review Mistakes</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- REVIEW SCREEN -->
+    <div id="reviewScreen" class="screen">
+      <div class="review-header">
+        <h2>Incorrect Answers Review</h2>
+        <button id="closeReviewBtn" class="btn btn-secondary" style="padding: 10px 20px; font-size: 0.9rem;">
+          Back to Results
+        </button>
+      </div>
+
+      <div id="reviewList" class="review-list">
+        <!-- Review Items Dynamic -->
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // COMPLETE 100 EXAM-LEVEL MCQS FROM SOURCE MATERIAL
+    const questionBank = [
+      {
+        question: "Which of the following complete packages defines software according to standard Software Engineering principles?",
+        options: ["Executable programs only", "Executable programs, data structures, and documentation", "Source code and hardware specifications", "Database management systems and hardware drivers"],
+        answer: "Executable programs, data structures, and documentation"
+      },
+      {
+        question: "System software is specifically designed to perform which primary function?",
+        options: ["Fulfill specific end-user business tasks", "Manage computer hardware and provide a platform for application software", "Create bespoke tailored software for single clients", "Generate automated project task breakdowns"],
+        answer: "Manage computer hardware and provide a platform for application software"
+      },
+      {
+        question: "Which class of software products is developed for an open market and sold to any customer capable of purchasing it?",
+        options: ["Bespoke products", "Generic products", "Embedded products", "Custom-built products"],
+        answer: "Generic products"
+      },
+      {
+        question: "What is a major advantage of generic off-the-shelf software compared to bespoke software?",
+        options: ["100% of user requirements are satisfied", "Source code is completely accessible for modifications", "Lower cost because development expense is divided among multiple clients", "Easier to accommodate unique future organizational changes"],
+        answer: "Lower cost because development expense is divided among multiple clients"
+      },
+      {
+        question: "The ease with which software can be modified or updated to meet changing customer needs refers to which software attribute?",
+        options: ["Dependability", "Usability", "Efficiency", "Maintainability"],
+        answer: "Maintainability"
+      },
+      {
+        question: "Who originally introduced the classic sequential Waterfall Model in 1970?",
+        options: ["Edsger Dijkstra", "Winston W. Royce", "Martin Fowler", "Alan Kay"],
+        answer: "Winston W. Royce"
+      },
+      {
+        question: "In the Waterfall Model, during which phase are individual source code modules created and tested independently?",
+        options: ["Requirements Analysis and Definition", "System and Software Design", "Implementation and Unit Testing", "Integration and System Testing"],
+        answer: "Implementation and Unit Testing"
+      },
+      {
+        question: "Which phase of the software development life cycle is typically the longest?",
+        options: ["System and Software Design", "Implementation and Unit Testing", "Integration and System Testing", "Operations and Maintenance"],
+        answer: "Operations and Maintenance"
+      },
+      {
+        question: "An evolutionary development approach where the objective is to explore customer requirements and deliver a final system starting from well-understood parts is called:",
+        options: ["Throw-away prototyping", "Exploratory development", "Waterfall progression", "Structured sequence"],
+        answer: "Exploratory development"
+      },
+      {
+        question: "What is the primary objective of throw-away prototyping?",
+        options: ["To build the core infrastructure of the final product directly", "To experiment with poorly understood customer requirements to refine specifications", "To release working increments to the open market every 1-4 weeks", "To eliminate the need for programmer documentation"],
+        answer: "To experiment with poorly understood customer requirements to refine specifications"
+      },
+      {
+        question: "In Agile development, manageable development iterations are commonly referred to as:",
+        options: ["Flows", "Sprints", "Increments", "Cascades"],
+        answer: "Sprints"
+      },
+      {
+        question: "Which primary Agile role is responsible for facilitating daily stand-ups, removing blockers, and shielding the team from external disturbances?",
+        options: ["Product Owner", "System Architect", "Scrum Master", "Cross-functional Developer"],
+        answer: "Scrum Master"
+      },
+      {
+        question: "The role in Agile development that represents the voice of the customer and prioritizes feature values in the backlog is the:",
+        options: ["Scrum Master", "Product Owner", "Project Lead", "Technical Architect"],
+        answer: "Product Owner"
+      },
+      {
+        question: "What distinguishes professional software development from amateur programming?",
+        options: ["Professional software prioritizes code readability, maintainability, and design standards for multi-person long-term use", "Professional software relies entirely on flowcharts without code implementation", "Amateur software involves extensive beta testing before market release", "Amateur software strictly enforces Object-Oriented paradigms"],
+        answer: "Professional software prioritizes code readability, maintainability, and design standards for multi-person long-term use"
+      },
+      {
+        question: "Which early design tool emerged during the period when programming was treated as an 'Art Form' to visualize logical step-by-step execution?",
+        options: ["Use Case Diagram", "Flowchart", "Class Diagram", "Sequence Diagram"],
+        answer: "Flowchart"
+      },
+      {
+        question: "Structured programming emerged primarily to eliminate the chaotic and error-prone use of which programming statement?",
+        options: ["WHILE loop", "GOTO statement", "IF-ELSE construct", "CASE statement"],
+        answer: "GOTO statement"
+      },
+      {
+        question: "What are the three core control constructs utilized in structured programming?",
+        options: ["Input, Process, Output", "Sequence, Selection, Repetition", "Encapsulation, Inheritance, Polymorphism", "Specification, Validation, Maintenance"],
+        answer: "Sequence, Selection, Repetition"
+      },
+      {
+        question: "In flowchart standard notation, a diamond symbol represents which operation?",
+        options: ["Process instruction", "Input/Output operation", "Terminator (Start/Stop)", "Decision"],
+        answer: "Decision"
+      },
+      {
+        question: "Which web-based visual design tools are specifically highlighted for creating collaborative browser-based system maps and flowcharts?",
+        options: ["Lucidchart and Draw.io", "Photoshop and Illustrator", "ClickUp and Jira", "Docker and Kubernetes"],
+        answer: "Lucidchart and Draw.io"
+      },
+      {
+        question: "What is the fundamental formula linking program structure and data in pseudo-code design?",
+        options: ["PROGRAM = DESIGN + CODE", "PROGRAM = DATA + ALGORITHM", "PROGRAM = INPUT + OUTPUT", "PROGRAM = CLASS + OBJECT"],
+        answer: "PROGRAM = DATA + ALGORITHM"
+      },
+      {
+        question: "Variables or constants declared such that they can only be accessed within the specific function or module where they were defined have what scope?",
+        options: ["Global", "Universal", "Local", "Public"],
+        answer: "Local"
+      },
+      {
+        question: "What is the primary operational difference between a Function and a Procedure?",
+        options: ["A procedure accepts parameters while a function cannot", "A function always returns a single calculated value, whereas a procedure performs a task without necessarily returning a value", "A procedure is used only in Object-Oriented programming", "A function cannot alter internal data variables"],
+        answer: "A function always returns a single calculated value, whereas a procedure performs a task without necessarily returning a value"
+      },
+      {
+        question: "In Object-Oriented Programming, a class is best described as:",
+        options: ["An individual runtime instance stored in memory", "A blueprint or template defining common attributes and behaviors for a group of objects", "A procedural flowchart linking inputs and outputs", "An external system user represented by stick figures"],
+        answer: "A blueprint or template defining common attributes and behaviors for a group of objects"
+      },
+      {
+        question: "An object is defined as an individual:",
+        options: ["Abstraction of pseudo-code", "Instance of a class containing state and behavior", "Global variable scope", "Execution sprint in Scrum"],
+        answer: "Instance of a class containing state and behavior"
+      },
+      {
+        question: "In OOP, the data values held by an object that describe its state are referred to as:",
+        options: ["Methods", "Services", "Attributes", "Operations"],
+        answer: "Attributes"
+      },
+      {
+        question: "The functions performed by an object or services provided by it are known as its:",
+        options: ["Attributes", "Behaviors (Operations/Methods)", "Fields", "Data types"],
+        answer: "Behaviors (Operations/Methods)"
+      },
+      {
+        question: "What are the four fundamental pillars/concepts of Object-Oriented Programming?",
+        options: ["Sequence, Selection, Repetition, Iteration", "Encapsulation, Inheritance, Polymorphism, Abstraction", "Requirements, Design, Testing, Maintenance", "Actors, Use Cases, Boundaries, Associations"],
+        answer: "Encapsulation, Inheritance, Polymorphism, Abstraction"
+      },
+      {
+        question: "The mechanism by which a child class automatically acquires the attributes and operations of a parent superclass is known as:",
+        options: ["Encapsulation", "Polymorphism", "Inheritance", "Abstraction"],
+        answer: "Inheritance"
+      },
+      {
+        question: "In an inheritance hierarchy, the top-level class from which other classes derive is termed the:",
+        options: ["Subclass", "Derived class", "Superclass (Base/Parent class)", "Child class"],
+        answer: "Superclass (Base/Parent class)"
+      },
+      {
+        question: "Data Encapsulation is fundamentally defined as:",
+        options: ["Exposing all internal mechanisms to external objects", "Binding code (methods) and data (variables) together into a single unit while restricting direct outside access", "Deriving new sub-classes from base classes", "Allowing one method name to exhibit multiple behaviors"],
+        answer: "Binding code (methods) and data (variables) together into a single unit while restricting direct outside access"
+      },
+      {
+        question: "Because encapsulation restricts direct outside access and hides internal processing logic, it is often referred to as:",
+        options: ["Data duplication", "Information hiding", "Polymorphic binding", "Abstract generalism"],
+        answer: "Information hiding"
+      },
+      {
+        question: "Which concept allows objects of different classes to respond to the same operation call in unique, class-specific ways?",
+        options: ["Polymorphism", "Encapsulation", "Aggregation", "Data Scope"],
+        answer: "Polymorphism"
+      },
+      {
+        question: "Which fundamental OOP principle focuses on exposing only essential features to the user while hiding internal execution details (e.g., using an ATM without knowing transaction code)?",
+        options: ["Abstraction", "Inheritance", "Composition", "Multiplicity"],
+        answer: "Abstraction"
+      },
+      {
+        question: "In Object-Oriented systems, how do objects interact with one another to execute tasks?",
+        options: ["By directly overwriting each other's private variables", "By sending messages", "By modifying superclass flowcharts", "By re-instantiating the operating system"],
+        answer: "By sending messages"
+      },
+      {
+        question: "Which type of association represents a 'Has-a' relationship between objects where the child object can exist independently of the parent object?",
+        options: ["Composition", "Aggregation", "Generalization", "Inheritance"],
+        answer: "Aggregation"
+      },
+      {
+        question: "What distinguishes Composition from general Aggregation in UML modeling?",
+        options: ["Composition allows child objects to exist after parent destruction", "Composition is a strict 'part-of' relationship where child objects cannot exist without the parent container object", "Composition represents a one-to-many inheritance model", "Composition is used exclusively for external documentation"],
+        answer: "Composition is a strict 'part-of' relationship where child objects cannot exist without the parent container object"
+      },
+      {
+        question: "If a House object containing Room objects is destroyed, and all constituent Room objects cease to exist as a result, this relationship is:",
+        options: ["Aggregation", "Composition", "Generalization", "Multiplicity"],
+        answer: "Composition"
+      },
+      {
+        question: "If an Employee object belongs to a Department, but deleting the Department does NOT destroy the Employee object, the relationship is:",
+        options: ["Composition", "Aggregation", "Inheritance", "Polymorphism"],
+        answer: "Aggregation"
+      },
+      {
+        question: "UML stands for:",
+        options: ["Universal Machine Language", "Unified Modeling Language", "United Maintenance Logic", "Unified Modular Listing"],
+        answer: "Unified Modeling Language"
+      },
+      {
+        question: "Which standardizing body proposed the initial UML 1.0 specification draft in January 1997?",
+        options: ["IEEE", "ISO", "Object Management Group (OMG)", "W3C"],
+        answer: "Object Management Group (OMG)"
+      },
+      {
+        question: "In UML Use Case Diagrams, external users or systems interacting with the modeled application are represented as:",
+        options: ["Ovals", "Actors (Stick figures or labeled blocks)", "Rectangles", "Diamonds"],
+        answer: "Actors (Stick figures or labeled blocks)"
+      },
+      {
+        question: "In a Use Case Diagram, system functionalities offered to actors are visually depicted as:",
+        options: ["Stick figures", "Ovals within the system boundary", "Solid black diamonds", "Dashed arrows"],
+        answer: "Ovals within the system boundary"
+      },
+      {
+        question: "What line element connects actors to use cases in a UML Use Case Diagram to signify interaction?",
+        options: ["System boundary", "Communication (Association line)", "Generalization arrow", "Composition diamond"],
+        answer: "Communication (Association line)"
+      },
+      {
+        question: "In UML Class Diagrams, a rectangle representing a class is divided into how many main compartments?",
+        options: ["One", "Two", "Three (Name, Attributes, Operations/Methods)", "Four"],
+        answer: "Three (Name, Attributes, Operations/Methods)"
+      },
+      {
+        question: "In UML notation, visibility markers '-' and '+' represent which access levels respectively?",
+        options: ["Public and Private", "Private and Public", "Protected and Global", "Package and Internal"],
+        answer: "Private and Public"
+      },
+      {
+        question: "In UML Class Diagrams, a Generalization relationship signifies which type of link between classes?",
+        options: ["'Has-a' ownership", "'Is-a' or 'Is-a-kind-of' inheritance link", "Independent message passing", "Temporary database connection"],
+        answer: "'Is-a' or 'Is-a-kind-of' inheritance link"
+      },
+      {
+        question: "Software Testing is primarily performed to check whether actual software matches expected requirements and to ensure the product is:",
+        options: ["Composed purely of generic modules", "Defect-free and verified against gaps", "Documented exclusively with internal comments", "Built without using any control structures"],
+        answer: "Defect-free and verified against gaps"
+      },
+      {
+        question: "Testing individual functions, methods, or smallest testable code parts in isolation is termed:",
+        options: ["System Testing", "Unit Testing", "Acceptance Testing", "Integration Testing"],
+        answer: "Unit Testing"
+      },
+      {
+        question: "Who typically performs Unit Testing during software development?",
+        options: ["End-users", "Independent Quality Assurance Testers", "Programmers / Developers", "Product Owners"],
+        answer: "Programmers / Developers"
+      },
+      {
+        question: "Black Box Testing evaluates a software system based purely on:",
+        options: ["Internal source code logic and branch execution", "Inputs and outputs without examining internal code structure", "Data variable naming conventions", "Compiler memory mapping"],
+        answer: "Inputs and outputs without examining internal code structure"
+      },
+      {
+        question: "White Box Testing requires testers to possess detailed knowledge of:",
+        options: ["Market sales channels", "Internal program logic and code structure", "Hardware manufacturing steps", "End-user login passwords"],
+        answer: "Internal program logic and code structure"
+      },
+      {
+        question: "System Testing evaluates:",
+        options: ["Individual functions in isolation", "The complete and integrated software application as a whole", "Only pseudo-code algorithms", "User manual grammar"],
+        answer: "The complete and integrated software application as a whole"
+      },
+      {
+        question: "A formal Test Plan description must include components like test identity, purpose, conditions, test data, and:",
+        options: ["Expected outcome and actual outcome", "Source code copyright licenses", "Developer salary quotes", "UML draft dates"],
+        answer: "Expected outcome and actual outcome"
+      },
+      {
+        question: "Programmer documentation embedded directly within source code syntax (such as comments and meaningful variable names) is classified as:",
+        options: ["External Documentation", "Internal Documentation", "User Documentation", "System Boundary"],
+        answer: "Internal Documentation"
+      },
+      {
+        question: "Programmer documentation written in separate manuals or files (such as program specifications and complex calculation formulae) is classified as:",
+        options: ["Internal Documentation", "External Documentation", "Inline Comments", "Abstract Specification"],
+        answer: "External Documentation"
+      },
+      {
+        question: "What is the primary focus of User Documentation (User Manuals)?",
+        options: ["Compiler instructions and source listings", "Guiding users on how to operate the software effectively without technical intricacies", "Exposing private class variables", "Defining White Box test paths"],
+        answer: "Guiding users on how to operate the software effectively without technical intricacies"
+      },
+      {
+        question: "ClickUp AI (now updated as ClickUp Brain) assists software development teams primarily during which phase?",
+        options: ["Hardware assembly", "Project planning, task generation, and sprint scheduling", "Compiler translation to binary", "Manual circuit testing"],
+        answer: "Project planning, task generation, and sprint scheduling"
+      },
+      {
+        question: "Which of the following is NOT a feature of AI tools like ClickUp AI in software planning?",
+        options: ["Automatic task creation from meeting notes", "Generating user stories and acceptance criteria", "Automated physical server installation", "Risk prediction and time estimation"],
+        answer: "Automated physical server installation"
+      },
+      {
+        question: "Which software category includes operating systems like Windows, Linux, and macOS?",
+        options: ["Application software", "System software", "Bespoke software", "Business software"],
+        answer: "System software"
+      },
+      {
+        question: "Translators like compilers, interpreters, and assemblers belong to which software classification?",
+        options: ["Application software", "System software", "Generic business products", "Bespoke user tools"],
+        answer: "System software"
+      },
+      {
+        question: "Software developed specifically for a single client contractor-wise (e.g., custom student system for a college) is called:",
+        options: ["Generic software", "Bespoke (Custom-built) software", "Off-the-shelf software", "System utility"],
+        answer: "Bespoke (Custom-built) software"
+      },
+      {
+        question: "Why can bespoke software accommodate future organizational changes more easily than generic software?",
+        options: ["Because bespoke software is sold on the open market", "Because source code is owned/accessible for customization", "Because bespoke software requires no initial development time", "Because it relies on GOTO constructs"],
+        answer: "Because source code is owned/accessible for customization"
+      },
+      {
+        question: "The software attribute describing optimal use of system resources like memory and processor time is:",
+        options: ["Robustness", "Efficiency", "Portability", "Usability"],
+        answer: "Efficiency"
+      },
+      {
+        question: "The SDLC Waterfall phase where project requirements are captured in a document understandable by both users and developers is:",
+        options: ["System Design", "Requirements Analysis and Definition", "Integration Testing", "Operations"],
+        answer: "Requirements Analysis and Definition"
+      },
+      {
+        question: "In the Waterfall model, what happens during the System Integration and Testing phase?",
+        options: ["Individual modules are coded for the first time", "Integrated program modules are tested together against total system requirements prior to delivery", "User manuals are discarded", "The overall architecture is separated into hardware and software"],
+        answer: "Integrated program modules are tested together against total system requirements prior to delivery"
+      },
+      {
+        question: "Which Agile framework structures work into 1 to 4 week iterations with daily stand-ups and sprint reviews?",
+        options: ["Waterfall", "Scrum", "Exploratory Prototyping", "Sequential Cascade"],
+        answer: "Scrum"
+      },
+      {
+        question: "Which role in an Agile team accepts user stories that meet the defined 'Definition of Done'?",
+        options: ["Scrum Master", "Product Owner", "External Auditor", "Lead Developer"],
+        answer: "Product Owner"
+      },
+      {
+        question: "An Agile cross-functional team typically consists of how many members?",
+        options: ["1 to 2 members", "5 to 9 members", "20 to 50 members", "100+ members"],
+        answer: "5 to 9 members"
+      },
+      {
+        question: "Why was unstructured early code considered a liability?",
+        options: ["It relied on nested loops", "Overuse of GOTO statements made flow chaotic and hard to maintain", "It forced developers to write external manuals", "It required UML diagrams"],
+        answer: "Overuse of GOTO statements made flow chaotic and hard to maintain"
+      },
+      {
+        question: "In flowcharting, which symbol represents data input or output operations?",
+        options: ["Rectangle", "Parallelogram", "Oval", "Diamond"],
+        answer: "Parallelogram"
+      },
+      {
+        question: "In flowcharting, an oval symbol represents:",
+        options: ["Decision point", "Process block", "Terminator (Start / Stop)", "Flow arrow"],
+        answer: "Terminator (Start / Stop)"
+      },
+      {
+        question: "In flowcharting, a rectangle symbol represents:",
+        options: ["Process / Command instruction", "Input/Output", "Decision", "Connector"],
+        answer: "Process / Command instruction"
+      },
+      {
+        question: "Which criteria must an effective program design tool meet to ensure quality design?",
+        options: ["Conciseness, Unambiguity, Executability, Elegance", "Complexity, Ambiguity, Lengthiness, Redundancy", "Randomness, Strictness, Binary, Isolation", "Encapsulation, Inheritance, Polymorphism, Abstraction"],
+        answer: "Conciseness, Unambiguity, Executability, Elegance"
+      },
+      {
+        question: "Data items stored as simple data types can hold:",
+        options: ["Multiple collections of mixed records", "Single primitive values (e.g., Integer, Real, Character)", "Arrays of objects", "Database tables"],
+        answer: "Single primitive values (e.g., Integer, Real, Character)"
+      },
+      {
+        question: "Complex data items that store a collection of elements of the same data type are called:",
+        options: ["Records", "Arrays", "Booleans", "Integers"],
+        answer: "Arrays"
+      },
+      {
+        question: "A data structure containing a collection of related fields of different data types identified by names is a:",
+        options: ["Constant", "Record", "Array of Integers", "Flow line"],
+        answer: "Record"
+      },
+      {
+        question: "A data item whose content cannot be changed during program execution is a:",
+        options: ["Variable", "Constant", "Module", "Procedure"],
+        answer: "Constant"
+      },
+      {
+        question: "Data items accessible by any module or function within a program are termed:",
+        options: ["Local data", "Global data", "Private attributes", "Encapsulated data"],
+        answer: "Global data"
+      },
+      {
+        question: "In pseudo-code, a multi-alternative selection construct that replaces long IF-ELSE chains is the:",
+        options: ["WHILE Loop", "CASE Statement", "FOR Loop", "REPEAT-UNTIL Loop"],
+        answer: "CASE Statement"
+      },
+      {
+        question: "A loop control construct that repeats a block of code as long as a specified condition remains true is a:",
+        options: ["Sequence", "WHILE Loop", "Terminator", "Data Declaration"],
+        answer: "WHILE Loop"
+      },
+      {
+        question: "In Object-Oriented terminology, a Person class having subclasses 'Student' and 'Employee' demonstrates:",
+        options: ["Inheritance", "Black Box Testing", "Waterfall SDLC", "Throw-away Prototyping"],
+        answer: "Inheritance"
+      },
+      {
+        question: "In the Person-Student-Employee inheritance example, attributes like 'Name', 'Age', and 'Height' belong to the:",
+        options: ["Subclasses only", "Superclass (Person)", "External user manual", "Database trigger"],
+        answer: "Superclass (Person)"
+      },
+      {
+        question: "Real-world analogy for Encapsulation provided in lecture notes includes:",
+        options: ["A house built of rooms", "A medical capsule encapsulating medicine inside", "An ATM machine screen", "A tree shedding leaves"],
+        answer: "A medical capsule encapsulating medicine inside"
+      },
+      {
+        question: "When logging into an email service like Gmail, password encryption and backend verification without user intervention is an example of:",
+        options: ["Encapsulation / Information Hiding", "White Box Testing", "Bespoke development", "System boundary deletion"],
+        answer: "Encapsulation / Information Hiding"
+      },
+      {
+        question: "The ability of an operation with the same name across different classes to execute distinct actions (e.g., Open Door, Open Window, Open Newspaper) is:",
+        options: ["Inheritance", "Polymorphism", "Multiplicity", "Data Scope"],
+        answer: "Polymorphism"
+      },
+      {
+        question: "Multiplicity (Cardinality) in UML associations defines:",
+        options: ["The execution speed of functions", "The number of objects in one class related to a single object of an associated class", "The number of lines in a flowchart", "The count of bugs found in unit testing"],
+        answer: "The number of objects in one class related to a single object of an associated class"
+      },
+      {
+        question: "A Driver having exactly one License is an example of what multiplicity?",
+        options: ["One-to-One (1:1)", "One-to-Many (1:N)", "Many-to-Many (N:M)", "Zero-to-Zero"],
+        answer: "One-to-One (1:1)"
+      },
+      {
+        question: "Multiple Lecturers teaching multiple Students in a university course is an example of what multiplicity?",
+        options: ["One-to-One", "One-to-Many", "Many-to-Many (*:*)", "Composition"],
+        answer: "Many-to-Many (*:*)"
+      },
+      {
+        question: "In UML diagrams, an empty (unfilled) diamond symbol attached to a class line represents:",
+        options: ["Composition", "Aggregation", "Generalization", "Dependency"],
+        answer: "Aggregation"
+      },
+      {
+        question: "In UML diagrams, a solid (filled black) diamond symbol attached to a class line represents:",
+        options: ["Aggregation", "Composition", "Inheritance", "Use Case"],
+        answer: "Composition"
+      },
+      {
+        question: "Human body parts like Heart, Brain, and Lungs relative to the Human body represent which OOP relationship?",
+        options: ["Aggregation", "Composition", "Generalization", "Polymorphism"],
+        answer: "Composition"
+      },
+      {
+        question: "In a Use Case Diagram, what visual boundary separates internal system use cases from external actors?",
+        options: ["Communication Line", "System Boundary Box", "Class Compartment", "Flowchart Arrow"],
+        answer: "System Boundary Box"
+      },
+      {
+        question: "Testing conducted to verify that code handles inputs correctly based on internal program logic pathways is:",
+        options: ["Black Box Testing", "White Box Testing", "Bespoke Testing", "Alpha Testing"],
+        answer: "White Box Testing"
+      },
+      {
+        question: "Which testing method selects test data based purely on requirements specifications rather than internal code logic?",
+        options: ["White Box Testing", "Black Box Testing", "Unit Path Testing", "Logic Coverage Testing"],
+        answer: "Black Box Testing"
+      },
+      {
+        question: "Performing testing without defining an expected outcome in advance is described as:",
+        options: ["Standard QA", "Experimenting rather than testing", "System Integration", "White Box Verification"],
+        answer: "Experimenting rather than testing"
+      },
+      {
+        question: "Good software documentation benefits which two main categories of people?",
+        options: ["Investors and Auditors", "Programmers and Users", "System Hardware and Operating System", "Scrum Masters and Competitors"],
+        answer: "Programmers and Users"
+      },
+      {
+        question: "Indentation of code blocks, blank lines separating modules, and meaningful variable names are examples of:",
+        options: ["External Documentation", "Internal Documentation", "User Manuals", "Bespoke Specifications"],
+        answer: "Internal Documentation"
+      },
+      {
+        question: "A document detailing user error messages, input data formats, and feature selection choices belongs to:",
+        options: ["Internal Code Comments", "User Documentation (User Manual)", "Unit Test Plan", "Hardware Specification"],
+        answer: "User Documentation (User Manual)"
+      },
+      {
+        question: "What is a primary benefit of using AI tools like ClickUp AI in software planning?",
+        options: ["Eliminates the need for software testing", "Saves time by automating task creation, documentation, and user story writing", "Replaces object-oriented programming with procedural flowcharts", "Guarantees 100% bug-free hardware assembly"],
+        answer: "Saves time by automating task creation, documentation, and user story writing"
+      },
+      {
+        question: "An integrated computer system consisting of CPU, Keyboard, and Mouse where components can exist separately is an example of:",
+        options: ["Composition", "Aggregation", "Generalization", "Polymorphism"],
+        answer: "Aggregation"
+      }
+    ];
+
+    // APP STATE
+    let quizQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let correctCount = 0;
+    let incorrectCount = 0;
+    let userAnswers = []; // track results for review
+
+    // DOM ELEMENTS
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const quizScreen = document.getElementById('quizScreen');
+    const resultsScreen = document.getElementById('resultsScreen');
+    const reviewScreen = document.getElementById('reviewScreen');
+
+    const startBtn = document.getElementById('startBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const reviewBtn = document.getElementById('reviewBtn');
+    const closeReviewBtn = document.getElementById('closeReviewBtn');
+
+    const qCountDisplay = document.getElementById('qCountDisplay');
+    const currentScoreDisplay = document.getElementById('currentScore');
+    const progressBar = document.getElementById('progressBar');
+    const questionText = document.getElementById('questionText');
+    const optionsGrid = document.getElementById('optionsGrid');
+    const feedbackBox = document.getElementById('feedbackBox');
+    const feedbackIcon = document.getElementById('feedbackIcon');
+    const feedbackText = document.getElementById('feedbackText');
+
+    const finalPercent = document.getElementById('finalPercent');
+    const scoreCircleProgress = document.getElementById('scoreCircleProgress');
+    const performanceTitle = document.getElementById('performanceTitle');
+    const performanceMsg = document.getElementById('performanceMsg');
+    const statTotal = document.getElementById('statTotal');
+    const statCorrect = document.getElementById('statCorrect');
+    const statIncorrect = document.getElementById('statIncorrect');
+    const reviewList = document.getElementById('reviewList');
+
+    // UTILITY: SHUFFLE ARRAY (Fisher-Yates)
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // INITIALIZE & START QUIZ
+    function startQuiz() {
+      // 1. Prepare questions with shuffled options & randomized correct answer positioning
+      quizQuestions = shuffleArray(questionBank).map(q => {
+        const shuffledOpts = shuffleArray(q.options);
+        return {
+          question: q.question,
+          options: shuffledOpts,
+          answer: q.answer
+        };
+      });
+
+      currentIndex = 0;
+      score = 0;
+      correctCount = 0;
+      incorrectCount = 0;
+      userAnswers = [];
+
+      currentScoreDisplay.textContent = '0';
+      
+      switchScreen(quizScreen);
+      loadQuestion();
+    }
+
+    // SWITCH SCREENS
+    function switchScreen(targetScreen) {
+      [welcomeScreen, quizScreen, resultsScreen, reviewScreen].forEach(s => {
+        s.classList.remove('active');
+      });
+      targetScreen.classList.add('active');
+    }
+
+    // LOAD CURRENT QUESTION
+    function loadQuestion() {
+      // Reset UI state
+      feedbackBox.className = 'feedback-box';
+      feedbackBox.style.display = 'none';
+      nextBtn.style.display = 'none';
+      optionsGrid.innerHTML = '';
+
+      const q = quizQuestions[currentIndex];
+
+      // Update Stats & Progress
+      qCountDisplay.textContent = `Question ${currentIndex + 1} of ${quizQuestions.length}`;
+      const progressPercent = ((currentIndex) / quizQuestions.length) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+
+      // Set Question Text
+      questionText.textContent = q.question;
+
+      // Render Option Buttons (A, B, C, D)
+      const prefixes = ['A', 'B', 'C', 'D'];
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `
+          <span class="option-prefix">${prefixes[idx]}</span>
+          <span class="option-text">${opt}</span>
+        `;
+        btn.addEventListener('click', () => handleOptionSelect(opt, btn));
+        optionsGrid.appendChild(btn);
+      });
+    }
+
+    // HANDLE OPTION SELECTION
+    function handleOptionSelect(selectedOption, clickedBtn) {
+      const q = quizQuestions[currentIndex];
+      const allButtons = optionsGrid.querySelectorAll('.option-btn');
+
+      // Disable all option buttons immediately
+      allButtons.forEach(btn => btn.disabled = true);
+
+      const isCorrect = selectedOption === q.answer;
+
+      // Store response for review
+      userAnswers.push({
+        questionNum: currentIndex + 1,
+        question: q.question,
+        selected: selectedOption,
+        correct: q.answer,
+        isCorrect: isCorrect
+      });
+
+      if (isCorrect) {
+        clickedBtn.classList.add('correct');
+        score += 10;
+        correctCount++;
+        currentScoreDisplay.textContent = score;
+
+        feedbackBox.className = 'feedback-box correct';
+        feedbackIcon.textContent = '✓';
+        feedbackText.textContent = 'Correct! Excellent work!';
+      } else {
+        clickedBtn.classList.add('incorrect');
+        incorrectCount++;
+
+        // Highlight the correct answer in green
+        allButtons.forEach(btn => {
+          const text = btn.querySelector('.option-text').textContent;
+          if (text === q.answer) {
+            btn.classList.add('correct');
+          }
+        });
+
+        feedbackBox.className = 'feedback-box incorrect';
+        feedbackIcon.textContent = '✕';
+        feedbackText.textContent = `Incorrect! Don't worry, keep learning!`;
+      }
+
+      feedbackBox.style.display = 'flex';
+      nextBtn.style.display = 'inline-flex';
+    }
+
+    // NEXT QUESTION OR FINISH
+    function handleNextQuestion() {
+      currentIndex++;
+      if (currentIndex < quizQuestions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    // DISPLAY RESULTS DASHBOARD
+    function showResults() {
+      progressBar.style.width = '100%';
+      switchScreen(resultsScreen);
+
+      const total = quizQuestions.length;
+      const percentage = Math.round((correctCount / total) * 100);
+
+      statTotal.textContent = total;
+      statCorrect.textContent = correctCount;
+      statIncorrect.textContent = incorrectCount;
+      finalPercent.textContent = `${percentage}%`;
+
+      // Animate SVG Progress Circle
+      // Circle circumference = 2 * PI * r = 2 * 3.14159 * 70 ≈ 440
+      const offset = 440 - (440 * percentage) / 100;
+      setTimeout(() => {
+        scoreCircleProgress.style.strokeDashoffset = offset;
+      }, 100);
+
+      // Performance Level Messaging
+      if (percentage >= 90) {
+        performanceTitle.textContent = "Outstanding Performance! 🌟";
+        performanceTitle.style.color = "#34d399";
+        performanceMsg.textContent = "You demonstrated top-tier mastery of Software Engineering & Object-Oriented concepts!";
+      } else if (percentage >= 75) {
+        performanceTitle.textContent = "Excellent Work! 🎉";
+        performanceTitle.style.color = "#67e8f9";
+        performanceMsg.textContent = "Great job! You have a strong grasp of software development principles.";
+      } else if (percentage >= 50) {
+        performanceTitle.textContent = "Good Effort! 📚";
+        performanceTitle.style.color = "#fbbf24";
+        performanceMsg.textContent = "Solid attempt! Review your incorrect answers to sharpen your exam readiness.";
+      } else {
+        performanceTitle.textContent = "Keep Learning! 💪";
+        performanceTitle.style.color = "#f87171";
+        performanceMsg.textContent = "Don't give up! Go through the course notes and try the practice quiz again.";
+      }
+    }
+
+    // RENDER INCORRECT ANSWERS REVIEW
+    function renderReview() {
+      reviewList.innerHTML = '';
+      const incorrects = userAnswers.filter(item => !item.isCorrect);
+
+      if (incorrects.length === 0) {
+        reviewList.innerHTML = `
+          <div class="review-item" style="text-align: center; padding: 40px;">
+            <h3 style="color: #34d399; font-size: 1.4rem;">Perfect Score! 🏆</h3>
+            <p style="color: var(--text-muted); margin-top: 8px;">You answered all 100 questions correctly. No mistakes to review!</p>
+          </div>
+        `;
+      } else {
+        incorrects.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'review-item';
+          div.innerHTML = `
+            <div class="review-q-title">Q${item.questionNum}. ${item.question}</div>
+            <div class="review-ans user-choice">
+              <span>✕ Your Answer:</span> <strong>${item.selected}</strong>
+            </div>
+            <div class="review-ans correct-choice">
+              <span>✓ Correct Answer:</span> <strong>${item.correct}</strong>
+            </div>
+          `;
+          reviewList.appendChild(div);
+        });
+      }
+
+      switchScreen(reviewScreen);
+    }
+
+    // EVENT LISTENERS
+    startBtn.addEventListener('click', startQuiz);
+    nextBtn.addEventListener('click', handleNextQuestion);
+    restartBtn.addEventListener('click', startQuiz);
+    reviewBtn.addEventListener('click', renderReview);
+    closeReviewBtn.addEventListener('click', () => switchScreen(resultsScreen));
+  </script>
+</body>
+</html>
